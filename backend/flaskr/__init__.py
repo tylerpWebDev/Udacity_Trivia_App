@@ -89,11 +89,9 @@ def create_app(test_config=None):
   @app.route('/questions/<int:question_id>/delete', methods=["DELETE", "GET"])
   @cross_origin()
   def delete_question(question_id):
-    cfunc.cprint("Question ID", question_id)
 
     try:
       question = Question.query.filter(Question.id == question_id).one_or_none()
-      cfunc.cprint("Question to Delete", question)
       Question.query.get(question_id).delete()
       db.session.commit()
       flash('Question has been successfully deleted!')
@@ -133,15 +131,23 @@ def create_app(test_config=None):
   @cross_origin()
   def create_question():
     res_data = json.loads(request.data.decode("utf-8"))
-    category = Category.query.filter(Category.id == int(res_data["category"])).all()
-    format_cat = [item.format() for item in category] 
+    try:
+      category = Category.query.filter(Category.id == int(res_data["category"])).all()
+      format_cat = [item.format() for item in category] 
+    
 
-    new_question = Question(
-                            question = res_data["question"],
-                            answer = res_data["answer"],
-                            category = format_cat[0]["id"], 
-                            difficulty = res_data["difficulty"]
-                            )
+    
+
+      new_question = Question(
+                              question = res_data["question"],
+                              answer = res_data["answer"],
+                              category = format_cat[0]["id"], 
+                              difficulty = res_data["difficulty"]
+                              )
+    except Exception as e:
+      print(e)
+      print("Missing required question data. Is this a negative test?")
+
 
     try:
       db.session.add(new_question)
@@ -197,7 +203,6 @@ def create_app(test_config=None):
   @cross_origin()
   def single_category(category_id):
     try:
-      print("THIS IS THE ROUTE!!!")
       page = request.args.get('page', 1, type=int)
       start = (page - 1) * 10
       end = start + 10
@@ -220,7 +225,6 @@ def create_app(test_config=None):
 
       formatted_questions["total_questions"] = len(formatted_questions["questions"])
       formatted_questions["current_category"] = None
-      cfunc.cprint("Formatted Questions by Category", formatted_questions)
       return jsonify(formatted_questions)
     except Exception as e:
       cfunc.cprint("Error", e)
@@ -238,12 +242,10 @@ def create_app(test_config=None):
       data = json.loads(request.data.decode("utf-8"))
       category_id = data["quiz_category"];
       previous_questions = data["previous_questions"]
-      cfunc.cprint("data", data)
         
       all_categories = [item.format() for item in Category.query.all()]
       all_questions = [item.format() for item in Question.query.filter(Question.category == category_id).all()]
       next_question = {}
-      cfunc.cprint("All Questions", all_questions)
 
       for x in all_questions:
         if x["id"] not in previous_questions:
