@@ -50,7 +50,7 @@ def create_app(test_config=None):
         return jsonify(formatted_response)
 
     # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    #     ++++++++++++++++++++++++++++++  GET ALL QUESTIONS - TODO: FIX PAGINA
+    #     ++++++++++++++++++++++++++++++  GET ALL QUESTIONS  ++++
     # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     @app.route('/questions')
@@ -78,6 +78,7 @@ def create_app(test_config=None):
         formatted_questions["total_questions"] = len(
             formatted_questions["questions"])
         formatted_questions["current_category"] = None
+        cfunc.cprint("/questions", formatted_questions)
         return jsonify(formatted_questions)
 
     # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -121,10 +122,11 @@ def create_app(test_config=None):
             formatted_questions["total_questions"] = len(
                 formatted_questions["questions"])
             formatted_questions["current_category"] = None
+            cfunc.cprint("/questions/id/delete", formatted_questions)
             return jsonify(formatted_questions)
 
     # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    #     ++++++++++++++++++++++++++++++  POST NEW QUESTION - COMPLETED  +++++
+    #     ++++++++++++++++++++++++++++++  POST NEW QUESTION - COMPLETED  +
     # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     @app.route("/questions/new", methods=["POST"])
@@ -184,6 +186,8 @@ def create_app(test_config=None):
                 "current_category": None
             }
 
+            cfunc.cprint("/questions/search", formatted_response)
+
             return jsonify(formatted_response)
         except Exception as e:
             cfunc.cprint("Error", e)
@@ -221,13 +225,14 @@ def create_app(test_config=None):
             formatted_questions["total_questions"] = len(
                 formatted_questions["questions"])
             formatted_questions["current_category"] = None
+            cfunc.cprint("/categories/<int: category_id>", formatted_questions)
             return jsonify(formatted_questions)
         except Exception as e:
             cfunc.cprint("Error", e)
             abort(404)
 
     # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    #     ++++++++++++++++++++++++++++++  PLAY QUIZ - COMPLETED  +++++++++++++
+    #     ++++++++++++++++++++++++++++++  PLAY QUIZ - COMPLETED  +
     # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     @app.route("/quizzes", methods=["GET", "POST"])
@@ -260,7 +265,7 @@ def create_app(test_config=None):
                 "question": next_question,
                 "categories": categories_list
             }
-
+            cfunc.cprint("/quizzes", formatted_questions)
             return jsonify(formatted_questions)
         except BaseException:
             cfunc.cprint("Error", e)
